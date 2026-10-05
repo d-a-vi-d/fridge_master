@@ -23,11 +23,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack)
             : Navigator.canPop(context)
             ? const BackButton()
-            : Image.asset('assets/images/logo6.png'),
+            : null,
+        // : Image.asset('assets/images/logo6.png'),
+        //TODO überarbeiten weil kein logo da ist
         title: Navigator.canPop(context)
             ? Row(
                 children: [
-                  Image.asset('assets/images/logo6.png', height: 30),
+                  // Image.asset('assets/images/logo6.png', height: 30),
                   const SizedBox(width: 8),
                   Expanded(child: Text(title, overflow: TextOverflow.ellipsis)),
                 ],

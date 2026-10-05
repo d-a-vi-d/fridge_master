@@ -66,5 +66,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.fridgemaster.app</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.fridgemaster.app</string>
+		</dict>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Zum Scannen von Barcodes</string>
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-package com.fluttertemplate.app
+package com.fridgemaster.app
 
 import io.flutter.embedding.android.FlutterActivity
 
