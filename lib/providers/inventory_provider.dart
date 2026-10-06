@@ -7,7 +7,7 @@ import 'products_provider.dart';
 part 'inventory_provider.g.dart';
 
 @riverpod
-Stream<List<Map<String, dynamic>>> _rawInventory(Ref ref) {
+Stream<List<Map<String, dynamic>>> rawInventory(Ref ref) {
   final householdId = ref.watch(selectedHouseholdIdProvider);
   if (householdId == null) return Stream.value([]);
 
@@ -20,7 +20,7 @@ Stream<List<Map<String, dynamic>>> _rawInventory(Ref ref) {
 
 @riverpod
 List<InventoryItem> inventory(Ref ref) {
-  final rawRows = ref.watch(_rawInventoryProvider).value ?? [];
+  final rawRows = ref.watch(rawInventoryProvider).value ?? [];
   final products = ref.watch(mergedProductsProvider);
 
   return rawRows.map((row) {
@@ -33,4 +33,12 @@ List<InventoryItem> inventory(Ref ref) {
       product: products[barcode],
     );
   }).toList();
+}
+
+/// true, solange der allererste Ladevorgang noch läuft (noch keine Daten von beiden Quellen da).
+@riverpod
+bool inventoryIsLoading(Ref ref) {
+  final rawLoading = ref.watch(rawInventoryProvider).isLoading;
+  final productsLoading = ref.watch(allProductsProvider).isLoading;
+  return rawLoading || productsLoading;
 }

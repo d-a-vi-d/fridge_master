@@ -53,30 +53,34 @@ class _AppShellState extends ConsumerState<AppShell> {
     }
   }
 
+  static const _loading = Scaffold(body: Center(child: CircularProgressIndicator()));
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider);
     if (user == null) return const SignInScreen();
 
     final householdsAsync = ref.watch(householdsProvider);
-    return householdsAsync.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Fehler: $e'))),
-      data: (households) {
-        if (households.isEmpty) return const HouseholdScreen();
 
-        final selected = ref.watch(selectedHouseholdIdProvider);
-        if (selected == null) {
-          // ersten Haushalt automatisch wählen, sobald Liste da ist
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(selectedHouseholdIdProvider.notifier).select(households.first.id);
-          });
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
-        }
+    if (householdsAsync.hasError) {
+      return Scaffold(body: Center(child: Text('Fehler: ${householdsAsync.error}')));
+    }
+    if (!householdsAsync.hasValue) {
+      return _loading;
+    }
 
-        return const HomeScreen();
-      },
-    );
+    final households = householdsAsync.value!;
+    if (households.isEmpty) return const HouseholdScreen();
+
+    final selected = ref.watch(selectedHouseholdIdProvider);
+    if (selected == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedHouseholdIdProvider.notifier).select(households.first.id);
+      });
+      return _loading;
+    }
+
+    return const HomeScreen();
   }
 
   @override

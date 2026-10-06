@@ -32,7 +32,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       _feedback = null;
     });
 
-    final notifier = ref.read(inventoryProvider.notifier);
+    final notifier = ref.read(inventoryProvider);
 
     try {
       if (_mode == ScanMode.stockIn) {

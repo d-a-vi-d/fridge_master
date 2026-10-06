@@ -19,7 +19,8 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final inventoryAsync = ref.watch(inventoryProvider);
+    final items = ref.watch(inventoryProvider);
+    final isLoading = ref.watch(inventoryIsLoadingProvider);
     final householdsAsync = ref.watch(householdsProvider);
     final selectedId = ref.watch(selectedHouseholdIdProvider);
 
@@ -35,30 +36,23 @@ class HomeScreen extends ConsumerWidget {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanScreen()));
       },
       scrollable: false,
-
-      // final items = ref.watch(inventoryProvider);
-      child: inventoryAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler: $e')),
-        data: (items) {
-          if (items.isEmpty) {
-            return const Center(child: Text('Noch nichts im Bestand'));
-          }
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, i) {
-              final item = items[i];
-              return ListTile(
-                title: Text(item.product?.name ?? item.barcode),
-                subtitle: item.expiryDate != null
-                    ? Text('MHD: ${item.expiryDate!.toLocal().toString().split(' ').first}')
-                    : null,
-                trailing: Text('${item.quantity}x'),
-              );
-            },
-          );
-        },
-      ),
+      child: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : items.isEmpty
+          ? const Center(child: Text('Noch nichts im Bestand'))
+          : ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, i) {
+                final item = items[i];
+                return ListTile(
+                  title: Text(item.product?.name ?? item.barcode),
+                  subtitle: item.expiryDate != null
+                      ? Text('MHD: ${item.expiryDate!.toLocal().toString().split(' ').first}')
+                      : null,
+                  trailing: Text('${item.quantity}x'),
+                );
+              },
+            ),
     );
   }
 }
