@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/household.dart';
 import '../providers/household_provider.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/custom_page.dart';
@@ -10,13 +9,6 @@ import 'scan_screen.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  String _titleFor(List<Household> households, String? selectedId) {
-    for (final h in households) {
-      if (h.id == selectedId) return h.name;
-    }
-    return 'Übersicht';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(inventoryProvider);
@@ -24,14 +16,18 @@ class HomeScreen extends ConsumerWidget {
     final householdsAsync = ref.watch(householdsProvider);
     final selectedId = ref.watch(selectedHouseholdIdProvider);
 
+    final title =
+        householdsAsync.value?.where((h) => h.id == selectedId).map((h) => h.name).firstOrNull ??
+        'Übersicht';
+
     return CustomPage(
+      title: title,
       appBarItem: IconButton(
         icon: const Icon(Icons.home_work_outlined),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const HouseholdScreen()));
         },
       ),
-      title: _titleFor(householdsAsync.value ?? [], selectedId),
       onFabPressed: () {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanScreen()));
       },

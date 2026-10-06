@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import '../widgets/custom_page.dart';
 
 class AddProductScreen extends StatefulWidget {
   final String barcode;
@@ -15,42 +16,37 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Produkt anlegen')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text('Barcode: ${widget.barcode}'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-            ),
-            TextField(
-              controller: _brandController,
-              decoration: const InputDecoration(labelText: 'Marke (optional)'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                if (_nameController.text.trim().isEmpty) return;
-                Navigator.pop(
-                  context,
-                  Product(
-                    barcode: widget.barcode,
-                    name: _nameController.text.trim(),
-                    brand: _brandController.text.trim().isEmpty
-                        ? null
-                        : _brandController.text.trim(),
-                    source: 'manual',
-                  ),
-                );
-              },
-              child: const Text('Speichern'),
-            ),
-          ],
-        ),
+    return CustomPage(
+      title: 'Produkt anlegen',
+      child: Column(
+        children: [
+          Text('Barcode: ${widget.barcode}'),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
+          TextField(
+            controller: _brandController,
+            decoration: const InputDecoration(labelText: 'Marke (optional)'),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              if (_nameController.text.trim().isEmpty) return;
+              Navigator.pop(
+                context,
+                Product(
+                  barcode: widget.barcode,
+                  name: _nameController.text.trim(),
+                  brand: _brandController.text.trim().isEmpty ? null : _brandController.text.trim(),
+                  source: 'manual',
+                ),
+              );
+            },
+            child: const Text('Speichern'),
+          ),
+        ],
       ),
     );
   }
