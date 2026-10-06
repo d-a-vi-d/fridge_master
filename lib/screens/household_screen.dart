@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fridge_master/widgets/custom_page.dart';
-import '../../providers/household_provider.dart';
+import '../providers/household_provider.dart';
 
 class HouseholdScreen extends ConsumerStatefulWidget {
   const HouseholdScreen({super.key});
@@ -16,9 +16,12 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
   String? _error;
 
   Future<void> _create() async {
-    if (_nameController.text.trim().isEmpty) return;
+    final name = _nameController.text.trim();
+    if (name.isEmpty) return;
     try {
-      await ref.read(householdsProvider.notifier).create(_nameController.text.trim());
+      final household = await ref.read(householdServiceProvider).create(name);
+      ref.invalidate(householdsProvider);
+      ref.read(selectedHouseholdIdProvider.notifier).select(household.id);
       _nameController.clear();
       setState(() => _error = null);
       if (mounted) Navigator.pop(context);
@@ -28,9 +31,12 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
   }
 
   Future<void> _join() async {
-    if (_codeController.text.trim().isEmpty) return;
+    final code = _codeController.text.trim();
+    if (code.isEmpty) return;
     try {
-      await ref.read(householdsProvider.notifier).join(_codeController.text.trim());
+      final household = await ref.read(householdServiceProvider).join(code);
+      ref.invalidate(householdsProvider);
+      ref.read(selectedHouseholdIdProvider.notifier).select(household.id);
       _codeController.clear();
       setState(() => _error = null);
       if (mounted) Navigator.pop(context);
@@ -42,7 +48,6 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
   @override
   Widget build(BuildContext context) {
     final householdsAsync = ref.watch(householdsProvider);
-    final selectedId = ref.watch(selectedHouseholdIdProvider);
 
     return CustomPage(
       title: "Haushalt",
@@ -63,7 +68,6 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
                     (h) => ListTile(
                       title: Text(h.name),
                       subtitle: Text('Code: ${h.inviteCode}'),
-                      trailing: h.id == selectedId ? const Icon(Icons.check_circle) : null,
                       onTap: () {
                         ref.read(selectedHouseholdIdProvider.notifier).select(h.id);
                         Navigator.pop(context);

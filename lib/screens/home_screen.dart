@@ -4,7 +4,7 @@ import '../models/household.dart';
 import '../providers/household_provider.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/custom_page.dart';
-import 'household/household_screen.dart';
+import 'household_screen.dart';
 import 'scan_screen.dart';
 
 class HomeScreen extends ConsumerWidget {

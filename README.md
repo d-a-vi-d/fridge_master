@@ -10,4 +10,5 @@ bei joinen muss man refreshen
 wenn ich was hinzufüge sollts die anderen optimistisch updaten
 
 
-scan screen fixen
+"name" ist scheiße
+provider refreshed sich selbst somehow

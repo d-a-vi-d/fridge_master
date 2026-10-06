@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fridge_master/providers/auth_provider.dart';
 import 'package:fridge_master/providers/household_provider.dart';
 import 'package:fridge_master/screens/home_screen.dart';
-import 'package:fridge_master/screens/household/household_screen.dart';
+import 'package:fridge_master/screens/household_screen.dart';
 import 'package:fridge_master/screens/sign_in_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';

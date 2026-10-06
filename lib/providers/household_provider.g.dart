@@ -9,11 +9,63 @@ part of 'household_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(Households)
+@ProviderFor(householdService)
+final householdServiceProvider = HouseholdServiceProvider._();
+
+final class HouseholdServiceProvider
+    extends
+        $FunctionalProvider<
+          HouseholdService,
+          HouseholdService,
+          HouseholdService
+        >
+    with $Provider<HouseholdService> {
+  HouseholdServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'householdServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$householdServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<HouseholdService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  HouseholdService create(Ref ref) {
+    return householdService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(HouseholdService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<HouseholdService>(value),
+    );
+  }
+}
+
+String _$householdServiceHash() => r'780dc3efeb9f875b9929ddda9e77a5f644f22e71';
+
+@ProviderFor(households)
 final householdsProvider = HouseholdsProvider._();
 
 final class HouseholdsProvider
-    extends $AsyncNotifierProvider<Households, List<Household>> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Household>>,
+          List<Household>,
+          Stream<List<Household>>
+        >
+    with $FutureModifier<List<Household>>, $StreamProvider<List<Household>> {
   HouseholdsProvider._()
     : super(
         from: null,
@@ -30,28 +82,17 @@ final class HouseholdsProvider
 
   @$internal
   @override
-  Households create() => Households();
-}
+  $StreamProviderElement<List<Household>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
-String _$householdsHash() => r'fe66666a3561af3d121419639a85fa689624aa8e';
-
-abstract class _$Households extends $AsyncNotifier<List<Household>> {
-  FutureOr<List<Household>> build();
-  @$mustCallSuper
   @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Household>>, List<Household>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Household>>, List<Household>>,
-              AsyncValue<List<Household>>,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
+  Stream<List<Household>> create(Ref ref) {
+    return households(ref);
   }
 }
+
+String _$householdsHash() => r'3eb405b07c156c441c865fb073dab0b10f97afc8';
 
 @ProviderFor(SelectedHouseholdId)
 final selectedHouseholdIdProvider = SelectedHouseholdIdProvider._();

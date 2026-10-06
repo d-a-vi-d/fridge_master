@@ -25,6 +25,7 @@ class InventoryService {
     });
   }
 
+  /// Gibt true zurück, wenn ein Bestand gefunden und reduziert/entfernt wurde.
   Future<bool> consume(String householdId, String barcode) async {
     final rows = await supabase
         .from('inventory_items')
@@ -34,7 +35,7 @@ class InventoryService {
         .order('expiry_date', ascending: true, nullsFirst: false)
         .limit(1);
 
-    if (rows.isEmpty) return false;
+    if ((rows as List).isEmpty) return false;
 
     final row = rows.first;
     final id = row['id'] as String;
