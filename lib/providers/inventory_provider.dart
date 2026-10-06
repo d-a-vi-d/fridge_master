@@ -1,13 +1,21 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../main.dart';
 import '../models/inventory_item.dart';
+import '../services/inventory_service.dart';
 import 'household_provider.dart';
 import 'products_provider.dart';
 
 part 'inventory_provider.g.dart';
 
+// --- Schreibzugriff ---
+
 @riverpod
-Stream<List<Map<String, dynamic>>> rawInventory(Ref ref) {
+InventoryService inventoryService(Ref ref) => InventoryService();
+
+// --- Lesezugriff (Realtime) ---
+
+@riverpod
+Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
   final householdId = ref.watch(selectedHouseholdIdProvider);
   if (householdId == null) return Stream.value([]);
 
@@ -18,9 +26,11 @@ Stream<List<Map<String, dynamic>>> rawInventory(Ref ref) {
       .order('updated_at');
 }
 
+// --- Abgeleitet ---
+
 @riverpod
 List<InventoryItem> inventory(Ref ref) {
-  final rawRows = ref.watch(rawInventoryProvider).value ?? [];
+  final rawRows = ref.watch(inventoryRawProvider).value ?? [];
   final products = ref.watch(mergedProductsProvider);
 
   return rawRows.map((row) {
@@ -35,10 +45,9 @@ List<InventoryItem> inventory(Ref ref) {
   }).toList();
 }
 
-/// true, solange der allererste Ladevorgang noch läuft (noch keine Daten von beiden Quellen da).
 @riverpod
 bool inventoryIsLoading(Ref ref) {
-  final rawLoading = ref.watch(rawInventoryProvider).isLoading;
+  final rawLoading = ref.watch(inventoryRawProvider).isLoading;
   final productsLoading = ref.watch(allProductsProvider).isLoading;
   return rawLoading || productsLoading;
 }

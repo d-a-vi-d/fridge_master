@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../models/product.dart';
-import '../providers/inventory_provider.dart';
+import '../providers/scan_provider.dart';
 import 'add_product_screen.dart';
-
-enum ScanMode { stockIn, consume }
 
 class ScanScreen extends ConsumerStatefulWidget {
   const ScanScreen({super.key});
@@ -15,59 +13,47 @@ class ScanScreen extends ConsumerStatefulWidget {
 }
 
 class _ScanScreenState extends ConsumerState<ScanScreen> {
-  ScanMode _mode = ScanMode.stockIn;
-  bool _busy = false;
-  String? _lastBarcode;
-  String? _feedback;
+  final _scanner = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+    formats: const [
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.upcA,
+      BarcodeFormat.upcE,
+    ],
+  );
 
-  Future<void> _onDetect(BarcodeCapture capture) async {
-    if (_busy) return;
-    final barcodes = capture.barcodes;
-    final barcode = barcodes.isEmpty ? null : barcodes.first.rawValue;
-    if (barcode == null || barcode == _lastBarcode) return;
+  @override
+  void dispose() {
+    _scanner.dispose();
+    super.dispose();
+  }
 
-    setState(() {
-      _busy = true;
-      _lastBarcode = barcode;
-      _feedback = null;
-    });
+  void _onDetect(BarcodeCapture capture) {
+    final barcode = capture.barcodes.firstOrNull?.rawValue;
+    if (barcode == null) return;
 
-    final notifier = ref.read(inventoryProvider);
+    ref.read(scanProvider.notifier).onBarcode(barcode, onUnknownProduct: _createProduct);
+  }
 
-    try {
-      if (_mode == ScanMode.stockIn) {
-        final product = await notifier.lookupProduct(barcode);
-        if (product == null) {
-          if (!mounted) return;
-          final created = await Navigator.push<Product>(
-            context,
-            MaterialPageRoute(builder: (_) => AddProductScreen(barcode: barcode)),
-          );
-          if (created != null) {
-            await notifier.stockIn(product: created);
-            setState(() => _feedback = '${created.name} eingeräumt');
-          }
-        } else {
-          await notifier.stockIn(product: product);
-          setState(() => _feedback = '${product.name} eingeräumt');
-        }
-      } else {
-        await notifier.consume(barcode);
-        setState(() => _feedback = 'Verbrauch gebucht');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _busy = false);
-        // kurze Sperre, damit derselbe Barcode nicht sofort doppelt erkannt wird
-        Future.delayed(const Duration(seconds: 2), () {
-          if (mounted) setState(() => _lastBarcode = null);
-        });
-      }
-    }
+  Future<Product?> _createProduct(String barcode) async {
+    await _scanner.stop();
+    if (!mounted) return null;
+
+    final product = await Navigator.push<Product>(
+      context,
+      MaterialPageRoute(builder: (_) => AddProductScreen(barcode: barcode)),
+    );
+
+    if (mounted) await _scanner.start();
+    return product;
   }
 
   @override
   Widget build(BuildContext context) {
+    final scan = ref.watch(scanProvider);
+    final controller = ref.read(scanProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Scannen')),
       body: Column(
@@ -79,24 +65,46 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 ButtonSegment(value: ScanMode.stockIn, label: Text('Einräumen')),
                 ButtonSegment(value: ScanMode.consume, label: Text('Verbrauchen')),
               ],
-              selected: {_mode},
-              onSelectionChanged: (s) => setState(() => _mode = s.first),
+              selected: {scan.mode},
+              onSelectionChanged: scan.busy ? null : (s) => controller.setMode(s.first),
             ),
           ),
-          if (_feedback != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(_feedback!, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ),
+          if (scan.feedback != null) _FeedbackBanner(feedback: scan.feedback!),
           Expanded(
             child: Stack(
               children: [
-                MobileScanner(onDetect: _onDetect),
-                if (_busy) const Center(child: CircularProgressIndicator()),
+                MobileScanner(controller: _scanner, onDetect: _onDetect),
+                if (scan.busy) const Center(child: CircularProgressIndicator()),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FeedbackBanner extends StatelessWidget {
+  const _FeedbackBanner({required this.feedback});
+  final ScanFeedback feedback;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: feedback.isError ? scheme.errorContainer : scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        feedback.message,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: feedback.isError ? scheme.onErrorContainer : scheme.onPrimaryContainer,
+        ),
       ),
     );
   }

@@ -5,7 +5,7 @@ class InventoryItem {
   final String barcode;
   final int quantity;
   final DateTime? expiryDate;
-  final Product? product; // aus dem Join, optional
+  final Product? product;
 
   InventoryItem({
     required this.id,

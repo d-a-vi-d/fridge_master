@@ -9,10 +9,56 @@ part of 'inventory_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(rawInventory)
-final rawInventoryProvider = RawInventoryProvider._();
+@ProviderFor(inventoryService)
+final inventoryServiceProvider = InventoryServiceProvider._();
 
-final class RawInventoryProvider
+final class InventoryServiceProvider
+    extends
+        $FunctionalProvider<
+          InventoryService,
+          InventoryService,
+          InventoryService
+        >
+    with $Provider<InventoryService> {
+  InventoryServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'inventoryServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$inventoryServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<InventoryService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  InventoryService create(Ref ref) {
+    return inventoryService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(InventoryService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<InventoryService>(value),
+    );
+  }
+}
+
+String _$inventoryServiceHash() => r'f8b33210475b8b2b25dae3b2829d303b4bdbd85c';
+
+@ProviderFor(inventoryRaw)
+final inventoryRawProvider = InventoryRawProvider._();
+
+final class InventoryRawProvider
     extends
         $FunctionalProvider<
           AsyncValue<List<Map<String, dynamic>>>,
@@ -22,19 +68,19 @@ final class RawInventoryProvider
     with
         $FutureModifier<List<Map<String, dynamic>>>,
         $StreamProvider<List<Map<String, dynamic>>> {
-  RawInventoryProvider._()
+  InventoryRawProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'rawInventoryProvider',
+        name: r'inventoryRawProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$rawInventoryHash();
+  String debugGetCreateSourceHash() => _$inventoryRawHash();
 
   @$internal
   @override
@@ -44,11 +90,11 @@ final class RawInventoryProvider
 
   @override
   Stream<List<Map<String, dynamic>>> create(Ref ref) {
-    return rawInventory(ref);
+    return inventoryRaw(ref);
   }
 }
 
-String _$rawInventoryHash() => r'd39f432136702e93c1ecd481f0d34408644505ab';
+String _$inventoryRawHash() => r'335ef8c634e414bb55dfd399d850ac356d9e3063';
 
 @ProviderFor(inventory)
 final inventoryProvider = InventoryProvider._();
@@ -95,19 +141,14 @@ final class InventoryProvider
   }
 }
 
-String _$inventoryHash() => r'65df0c65412e392a872d8b5d08a4434188ed2b15';
-
-/// true, solange der allererste Ladevorgang noch läuft (noch keine Daten von beiden Quellen da).
+String _$inventoryHash() => r'7d2690c9a29477e34e98e7a5e79d85fbaa482cab';
 
 @ProviderFor(inventoryIsLoading)
 final inventoryIsLoadingProvider = InventoryIsLoadingProvider._();
 
-/// true, solange der allererste Ladevorgang noch läuft (noch keine Daten von beiden Quellen da).
-
 final class InventoryIsLoadingProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  /// true, solange der allererste Ladevorgang noch läuft (noch keine Daten von beiden Quellen da).
   InventoryIsLoadingProvider._()
     : super(
         from: null,
@@ -142,4 +183,4 @@ final class InventoryIsLoadingProvider
 }
 
 String _$inventoryIsLoadingHash() =>
-    r'9b3d90b9c4ccf9f38ebd9b9a3be1fd0533a7816b';
+    r'df3170f6dbf5dec3e58461d1403f648c880df514';
