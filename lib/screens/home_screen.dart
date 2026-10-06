@@ -35,6 +35,8 @@ class HomeScreen extends ConsumerWidget {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanScreen()));
       },
       scrollable: false,
+
+      // final items = ref.watch(inventoryProvider);
       child: inventoryAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Fehler: $e')),

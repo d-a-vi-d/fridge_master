@@ -33,7 +33,7 @@ final class HouseholdsProvider
   Households create() => Households();
 }
 
-String _$householdsHash() => r'87eb2ecd3b9b6d0de91a75d3acae185f5eae093c';
+String _$householdsHash() => r'fe66666a3561af3d121419639a85fa689624aa8e';
 
 abstract class _$Households extends $AsyncNotifier<List<Household>> {
   FutureOr<List<Household>> build();

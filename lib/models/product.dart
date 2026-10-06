@@ -3,7 +3,7 @@ class Product {
   final String name;
   final String? brand;
   final String? imageUrl;
-  final String source; // 'off' oder 'manual'
+  final String source;
 
   Product({
     required this.barcode,
@@ -28,4 +28,13 @@ class Product {
     'image_url': imageUrl,
     'source': source,
   };
+
+  /// Erzeugt eine Kopie mit haushaltsspezifischem Namen/Marke überschrieben, falls vorhanden.
+  Product withLabel({String? customName, String? customBrand}) => Product(
+    barcode: barcode,
+    name: customName ?? name,
+    brand: customBrand ?? brand,
+    imageUrl: imageUrl,
+    source: source,
+  );
 }
