@@ -63,7 +63,7 @@ class Scan extends _$Scan {
       final feedback = await _process(barcode, state.mode, onUnknownProduct);
       if (feedback != null) _emit((s) => s.copyWith(feedback: feedback));
     } catch (e, st) {
-      debugPrint('Scan fehlgeschlagen: $e\n$st');
+      //debugPrint('Scan fehlgeschlagen: $e\n$st');
       _emit(
         (s) => s.copyWith(
           feedback: const ScanFeedback(

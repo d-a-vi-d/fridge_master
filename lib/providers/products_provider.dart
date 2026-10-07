@@ -10,9 +10,9 @@ part 'products_provider.g.dart';
 @riverpod
 Stream<Map<String, Product>> allProducts(Ref ref) {
   return supabase.from('products').stream(primaryKey: ['barcode']).map((rows) {
-    debugPrint(
-      '[allProducts] Emission: ${rows.length} Zeilen, zuletzt: ${rows.isNotEmpty ? rows.last : "-"}',
-    );
+    //debugPrint(
+    //   '[allProducts] Emission: ${rows.length} Zeilen, zuletzt: ${rows.isNotEmpty ? rows.last : "-"}',
+    // );
     return {for (final r in rows) r['barcode'] as String: Product.fromJson(r)};
   });
 }

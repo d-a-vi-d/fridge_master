@@ -18,7 +18,7 @@ InventoryService inventoryService(Ref ref) => InventoryService();
 @riverpod
 Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
   final householdId = ref.watch(selectedHouseholdIdProvider);
-  debugPrint('[inventoryRaw] neuer Stream-Aufbau, householdId=$householdId');
+  // debugPrint('[inventoryRaw] neuer Stream-Aufbau, householdId=$householdId');
   if (householdId == null) return Stream.value([]);
 
   return supabase
@@ -27,7 +27,7 @@ Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
       .eq('household_id', householdId)
       .order('updated_at')
       .map((rows) {
-        debugPrint('[inventoryRaw] Emission: ${rows.length} Zeilen');
+        //debugPrint('[inventoryRaw] Emission: ${rows.length} Zeilen');
         return rows;
       });
 }
@@ -38,7 +38,7 @@ Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
 List<InventoryItem> inventory(Ref ref) {
   final rawRows = ref.watch(inventoryRawProvider).value ?? [];
   final products = ref.watch(mergedProductsProvider);
-  debugPrint('[inventory] neu berechnet: ${rawRows.length} Zeilen, ${products.length} Produkte');
+  //debugPrint('[inventory] neu berechnet: ${rawRows.length} Zeilen, ${products.length} Produkte');
 
   return rawRows.map((row) {
     final barcode = row['barcode'] as String;
@@ -66,10 +66,10 @@ bool inventoryIsLoading(Ref ref) {
   final rawState = ref.watch(inventoryRawProvider);
   final productsState = ref.watch(allProductsProvider);
   final result = rawState.isLoading || productsState.isLoading;
-  debugPrint(
-    '[inventoryIsLoading] raw.isLoading=${rawState.isLoading} raw.hasValue=${rawState.hasValue} '
-    'products.isLoading=${productsState.isLoading} products.hasValue=${productsState.hasValue} '
-    '=> $result',
-  );
+  //debugPrint(
+  //   '[inventoryIsLoading] raw.isLoading=${rawState.isLoading} raw.hasValue=${rawState.hasValue} '
+  //   'products.isLoading=${productsState.isLoading} products.hasValue=${productsState.hasValue} '
+  //   '=> $result',
+  // );
   return result;
 }
