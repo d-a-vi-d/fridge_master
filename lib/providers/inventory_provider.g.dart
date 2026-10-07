@@ -94,7 +94,7 @@ final class InventoryRawProvider
   }
 }
 
-String _$inventoryRawHash() => r'335ef8c634e414bb55dfd399d850ac356d9e3063';
+String _$inventoryRawHash() => r'0467710b5429b42cf11d4f04f121b51113a25e79';
 
 @ProviderFor(inventory)
 final inventoryProvider = InventoryProvider._();
@@ -141,7 +141,7 @@ final class InventoryProvider
   }
 }
 
-String _$inventoryHash() => r'7d2690c9a29477e34e98e7a5e79d85fbaa482cab';
+String _$inventoryHash() => r'd58dbe2ffa7bff31432e3b73ee324027668d0206';
 
 @ProviderFor(inventoryIsLoading)
 final inventoryIsLoadingProvider = InventoryIsLoadingProvider._();
@@ -183,4 +183,4 @@ final class InventoryIsLoadingProvider
 }
 
 String _$inventoryIsLoadingHash() =>
-    r'df3170f6dbf5dec3e58461d1403f648c880df514';
+    r'2bc8b0b7a715eaa4650a466c926f9f3bd5d1fd00';

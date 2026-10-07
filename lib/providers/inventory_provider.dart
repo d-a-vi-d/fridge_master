@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../main.dart';
 import '../models/inventory_item.dart';
@@ -17,13 +18,18 @@ InventoryService inventoryService(Ref ref) => InventoryService();
 @riverpod
 Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
   final householdId = ref.watch(selectedHouseholdIdProvider);
+  debugPrint('[inventoryRaw] neuer Stream-Aufbau, householdId=$householdId');
   if (householdId == null) return Stream.value([]);
 
   return supabase
       .from('inventory_items')
       .stream(primaryKey: ['id'])
       .eq('household_id', householdId)
-      .order('updated_at');
+      .order('updated_at')
+      .map((rows) {
+        debugPrint('[inventoryRaw] Emission: ${rows.length} Zeilen');
+        return rows;
+      });
 }
 
 // --- Abgeleitet ---
@@ -32,6 +38,7 @@ Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
 List<InventoryItem> inventory(Ref ref) {
   final rawRows = ref.watch(inventoryRawProvider).value ?? [];
   final products = ref.watch(mergedProductsProvider);
+  debugPrint('[inventory] neu berechnet: ${rawRows.length} Zeilen, ${products.length} Produkte');
 
   return rawRows.map((row) {
     final barcode = row['barcode'] as String;
@@ -45,9 +52,24 @@ List<InventoryItem> inventory(Ref ref) {
   }).toList();
 }
 
+// @riverpod
+// bool inventoryIsLoading(Ref ref) {
+//   final rawState = ref.watch(inventoryRawProvider);
+//   final productsState = ref.watch(allProductsProvider);
+//   final result = rawState.isLoading || productsState.isLoading;
+
+//   return result;
+// }
+
 @riverpod
 bool inventoryIsLoading(Ref ref) {
-  final rawLoading = ref.watch(inventoryRawProvider).isLoading;
-  final productsLoading = ref.watch(allProductsProvider).isLoading;
-  return rawLoading || productsLoading;
+  final rawState = ref.watch(inventoryRawProvider);
+  final productsState = ref.watch(allProductsProvider);
+  final result = rawState.isLoading || productsState.isLoading;
+  debugPrint(
+    '[inventoryIsLoading] raw.isLoading=${rawState.isLoading} raw.hasValue=${rawState.hasValue} '
+    'products.isLoading=${productsState.isLoading} products.hasValue=${productsState.hasValue} '
+    '=> $result',
+  );
+  return result;
 }

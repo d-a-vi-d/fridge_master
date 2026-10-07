@@ -52,7 +52,7 @@ final class AllProductsProvider
   }
 }
 
-String _$allProductsHash() => r'3c34ed2e25c8761fd4dbf9de4081b5b4cd43a8e8';
+String _$allProductsHash() => r'e36d64479857c9331d3868613c2aadbfbc6fcd1c';
 
 /// Haushaltsspezifische Namens-Overrides, barcode → (name, brand).
 

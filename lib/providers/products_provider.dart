@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../main.dart';
 import '../models/product.dart';
@@ -8,10 +9,12 @@ part 'products_provider.g.dart';
 /// Alle globalen Produktstammdaten, barcode → Product.
 @riverpod
 Stream<Map<String, Product>> allProducts(Ref ref) {
-  return supabase
-      .from('products')
-      .stream(primaryKey: ['barcode'])
-      .map((rows) => {for (final r in rows) r['barcode'] as String: Product.fromJson(r)});
+  return supabase.from('products').stream(primaryKey: ['barcode']).map((rows) {
+    debugPrint(
+      '[allProducts] Emission: ${rows.length} Zeilen, zuletzt: ${rows.isNotEmpty ? rows.last : "-"}',
+    );
+    return {for (final r in rows) r['barcode'] as String: Product.fromJson(r)};
+  });
 }
 
 /// Haushaltsspezifische Namens-Overrides, barcode → (name, brand).
