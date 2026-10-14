@@ -32,7 +32,7 @@ final class AllProductsProvider
         argument: null,
         retry: null,
         name: r'allProductsProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -52,14 +52,10 @@ final class AllProductsProvider
   }
 }
 
-String _$allProductsHash() => r'e36d64479857c9331d3868613c2aadbfbc6fcd1c';
-
-/// Haushaltsspezifische Namens-Overrides, barcode → (name, brand).
+String _$allProductsHash() => r'241a21c35564d4c3648173b8b0a01baf9e4992c9';
 
 @ProviderFor(householdLabels)
-final householdLabelsProvider = HouseholdLabelsProvider._();
-
-/// Haushaltsspezifische Namens-Overrides, barcode → (name, brand).
+final householdLabelsProvider = HouseholdLabelsFamily._();
 
 final class HouseholdLabelsProvider
     extends
@@ -71,20 +67,26 @@ final class HouseholdLabelsProvider
     with
         $FutureModifier<Map<String, ({String? brand, String? name})>>,
         $StreamProvider<Map<String, ({String? brand, String? name})>> {
-  /// Haushaltsspezifische Namens-Overrides, barcode → (name, brand).
-  HouseholdLabelsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'householdLabelsProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  HouseholdLabelsProvider._({
+    required HouseholdLabelsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'householdLabelsProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$householdLabelsHash();
+
+  @override
+  String toString() {
+    return r'householdLabelsProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
@@ -93,18 +95,47 @@ final class HouseholdLabelsProvider
 
   @override
   Stream<Map<String, ({String? brand, String? name})>> create(Ref ref) {
-    return householdLabels(ref);
+    final argument = this.argument as String;
+    return householdLabels(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is HouseholdLabelsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
   }
 }
 
-String _$householdLabelsHash() => r'e078248cc55b9d893517595e7cf110542ae234c9';
+String _$householdLabelsHash() => r'f10a28bb03035e16c8d24cc93eb69abd0595bae8';
 
-/// Fertig gemergte Produktliste: globaler Name, haushaltsspezifisch überschrieben wo vorhanden.
+final class HouseholdLabelsFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          Stream<Map<String, ({String? brand, String? name})>>,
+          String
+        > {
+  HouseholdLabelsFamily._()
+    : super(
+        retry: null,
+        name: r'householdLabelsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  HouseholdLabelsProvider call(String householdId) =>
+      HouseholdLabelsProvider._(argument: householdId, from: this);
+
+  @override
+  String toString() => r'householdLabelsProvider';
+}
 
 @ProviderFor(mergedProducts)
 final mergedProductsProvider = MergedProductsProvider._();
-
-/// Fertig gemergte Produktliste: globaler Name, haushaltsspezifisch überschrieben wo vorhanden.
 
 final class MergedProductsProvider
     extends
@@ -114,7 +145,6 @@ final class MergedProductsProvider
           Map<String, Product>
         >
     with $Provider<Map<String, Product>> {
-  /// Fertig gemergte Produktliste: globaler Name, haushaltsspezifisch überschrieben wo vorhanden.
   MergedProductsProvider._()
     : super(
         from: null,
@@ -149,4 +179,4 @@ final class MergedProductsProvider
   }
 }
 
-String _$mergedProductsHash() => r'11e1ab21be2e6ca0cbcefedfd343b7becd2ce4ce';
+String _$mergedProductsHash() => r'3257784ef98cfcb739465f9745b9d7ab9b10bb10';

@@ -25,27 +25,23 @@ class InventoryService {
     });
   }
 
-  /// Gibt true zurück, wenn ein Bestand gefunden und reduziert/entfernt wurde.
   Future<bool> consume(String householdId, String barcode) async {
     final rows = await supabase
         .from('inventory_items')
         .select('id, quantity')
         .eq('household_id', householdId)
         .eq('barcode', barcode)
+        .gt('quantity', 0) // Nullzeilen nicht mehr auswählen
         .order('expiry_date', ascending: true, nullsFirst: false)
         .limit(1);
 
     if ((rows as List).isEmpty) return false;
 
     final row = rows.first;
-    final id = row['id'] as String;
-    final qty = row['quantity'] as int;
-
-    if (qty <= 1) {
-      await supabase.from('inventory_items').delete().eq('id', id);
-    } else {
-      await supabase.from('inventory_items').update({'quantity': qty - 1}).eq('id', id);
-    }
+    await supabase
+        .from('inventory_items')
+        .update({'quantity': (row['quantity'] as int) - 1})
+        .eq('id', row['id'] as String);
     return true;
   }
 

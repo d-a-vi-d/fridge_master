@@ -56,7 +56,7 @@ final class InventoryServiceProvider
 String _$inventoryServiceHash() => r'f8b33210475b8b2b25dae3b2829d303b4bdbd85c';
 
 @ProviderFor(inventoryRaw)
-final inventoryRawProvider = InventoryRawProvider._();
+final inventoryRawProvider = InventoryRawFamily._();
 
 final class InventoryRawProvider
     extends
@@ -68,19 +68,26 @@ final class InventoryRawProvider
     with
         $FutureModifier<List<Map<String, dynamic>>>,
         $StreamProvider<List<Map<String, dynamic>>> {
-  InventoryRawProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'inventoryRawProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  InventoryRawProvider._({
+    required InventoryRawFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'inventoryRawProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$inventoryRawHash();
+
+  @override
+  String toString() {
+    return r'inventoryRawProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
@@ -90,11 +97,40 @@ final class InventoryRawProvider
 
   @override
   Stream<List<Map<String, dynamic>>> create(Ref ref) {
-    return inventoryRaw(ref);
+    final argument = this.argument as String;
+    return inventoryRaw(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is InventoryRawProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
   }
 }
 
-String _$inventoryRawHash() => r'0467710b5429b42cf11d4f04f121b51113a25e79';
+String _$inventoryRawHash() => r'05e3fe15041f8f35664d6d9149cb3b096b73b95a';
+
+final class InventoryRawFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Map<String, dynamic>>>, String> {
+  InventoryRawFamily._()
+    : super(
+        retry: null,
+        name: r'inventoryRawProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  InventoryRawProvider call(String householdId) =>
+      InventoryRawProvider._(argument: householdId, from: this);
+
+  @override
+  String toString() => r'inventoryRawProvider';
+}
 
 @ProviderFor(inventory)
 final inventoryProvider = InventoryProvider._();
@@ -141,7 +177,7 @@ final class InventoryProvider
   }
 }
 
-String _$inventoryHash() => r'd58dbe2ffa7bff31432e3b73ee324027668d0206';
+String _$inventoryHash() => r'ac6c659ba407f4030002e612ddddd5e779d88d6e';
 
 @ProviderFor(inventoryIsLoading)
 final inventoryIsLoadingProvider = InventoryIsLoadingProvider._();
@@ -183,4 +219,4 @@ final class InventoryIsLoadingProvider
 }
 
 String _$inventoryIsLoadingHash() =>
-    r'2bc8b0b7a715eaa4650a466c926f9f3bd5d1fd00';
+    r'd60c5462b420c95a594d060a6edbd996b438057b';

@@ -6,22 +6,16 @@ import 'household_provider.dart';
 part 'products_provider.g.dart';
 
 /// Alle globalen Produktstammdaten, barcode → Product.
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<Map<String, Product>> allProducts(Ref ref) {
-  return supabase.from('products').stream(primaryKey: ['barcode']).map((rows) {
-    //debugPrint(
-    //   '[allProducts] Emission: ${rows.length} Zeilen, zuletzt: ${rows.isNotEmpty ? rows.last : "-"}',
-    // );
-    return {for (final r in rows) r['barcode'] as String: Product.fromJson(r)};
-  });
+  return supabase
+      .from('products')
+      .stream(primaryKey: ['barcode'])
+      .map((rows) => {for (final r in rows) r['barcode'] as String: Product.fromJson(r)});
 }
 
-/// Haushaltsspezifische Namens-Overrides, barcode → (name, brand).
-@riverpod
-Stream<Map<String, ({String? name, String? brand})>> householdLabels(Ref ref) {
-  final householdId = ref.watch(selectedHouseholdIdProvider);
-  if (householdId == null) return Stream.value({});
-
+@Riverpod(keepAlive: true)
+Stream<Map<String, ({String? name, String? brand})>> householdLabels(Ref ref, String householdId) {
   return supabase
       .from('household_product_labels')
       .stream(primaryKey: ['household_id', 'barcode'])
@@ -37,14 +31,14 @@ Stream<Map<String, ({String? name, String? brand})>> householdLabels(Ref ref) {
       );
 }
 
-/// Fertig gemergte Produktliste: globaler Name, haushaltsspezifisch überschrieben wo vorhanden.
 @riverpod
 Map<String, Product> mergedProducts(Ref ref) {
+  final householdId = ref.watch(selectedHouseholdIdProvider);
   final products = ref.watch(allProductsProvider).value ?? {};
-  final labels = ref.watch(householdLabelsProvider).value ?? {};
+  final labels = householdId == null ? null : ref.watch(householdLabelsProvider(householdId)).value;
 
   return products.map((barcode, product) {
-    final label = labels[barcode];
+    final label = labels?[barcode];
     if (label == null) return MapEntry(barcode, product);
     return MapEntry(barcode, product.withLabel(customName: label.name, customBrand: label.brand));
   });

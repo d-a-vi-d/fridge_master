@@ -14,30 +14,25 @@ InventoryService inventoryService(Ref ref) => InventoryService();
 
 // --- Lesezugriff (Realtime) ---
 
-@riverpod
-Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref) {
-  final householdId = ref.watch(selectedHouseholdIdProvider);
-  // debugPrint('[inventoryRaw] neuer Stream-Aufbau, householdId=$householdId');
-  if (householdId == null) return Stream.value([]);
-
+// Stream pro Haushalt, keepAlive: wird bei Screenwechseln nicht verworfen
+@Riverpod(keepAlive: true)
+Stream<List<Map<String, dynamic>>> inventoryRaw(Ref ref, String householdId) {
   return supabase
       .from('inventory_items')
       .stream(primaryKey: ['id'])
       .eq('household_id', householdId)
-      .order('updated_at')
-      .map((rows) {
-        //debugPrint('[inventoryRaw] Emission: ${rows.length} Zeilen');
-        return rows;
-      });
+      .order('updated_at');
 }
-
-// --- Abgeleitet ---
 
 @riverpod
 List<InventoryItem> inventory(Ref ref) {
-  final rawRows = ref.watch(inventoryRawProvider).value ?? [];
+  final householdId = ref.watch(selectedHouseholdIdProvider);
+  if (householdId == null) return [];
+
+  final rawRows = (ref.watch(inventoryRawProvider(householdId)).value ?? []).where(
+    (row) => (row['quantity'] as int) > 0,
+  ); // verbrauchte Zeilen ausblenden
   final products = ref.watch(mergedProductsProvider);
-  //debugPrint('[inventory] neu berechnet: ${rawRows.length} Zeilen, ${products.length} Produkte');
 
   return rawRows.map((row) {
     final barcode = row['barcode'] as String;
@@ -51,24 +46,14 @@ List<InventoryItem> inventory(Ref ref) {
   }).toList();
 }
 
-// @riverpod
-// bool inventoryIsLoading(Ref ref) {
-//   final rawState = ref.watch(inventoryRawProvider);
-//   final productsState = ref.watch(allProductsProvider);
-//   final result = rawState.isLoading || productsState.isLoading;
-
-//   return result;
-// }
-
 @riverpod
 bool inventoryIsLoading(Ref ref) {
-  final rawState = ref.watch(inventoryRawProvider);
-  final productsState = ref.watch(allProductsProvider);
-  final result = rawState.isLoading || productsState.isLoading;
-  //debugPrint(
-  //   '[inventoryIsLoading] raw.isLoading=${rawState.isLoading} raw.hasValue=${rawState.hasValue} '
-  //   'products.isLoading=${productsState.isLoading} products.hasValue=${productsState.hasValue} '
-  //   '=> $result',
-  // );
-  return result;
+  final householdId = ref.watch(selectedHouseholdIdProvider);
+  if (householdId == null) return false;
+
+  final raw = ref.watch(inventoryRawProvider(householdId));
+  final products = ref.watch(allProductsProvider);
+
+  // Spinner nur, solange noch gar keine Daten da waren
+  return (raw.isLoading && !raw.hasValue) || (products.isLoading && !products.hasValue);
 }

@@ -40,7 +40,7 @@ final class ScanProvider extends $NotifierProvider<Scan, ScanState> {
   }
 }
 
-String _$scanHash() => r'2165a926954d445d011fd3e005a80a33e876d8ff';
+String _$scanHash() => r'163d2c9d8e24dc12c2dd544dc02957dcfea0accb';
 
 abstract class _$Scan extends $Notifier<ScanState> {
   ScanState build();
