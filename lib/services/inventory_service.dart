@@ -8,7 +8,7 @@ class InventoryService {
   }
 
   Future<void> upsertProduct(Product product) async {
-    await supabase.from('products').upsert(product.toJson());
+    await supabase.from('products').upsert(product.toJson(), ignoreDuplicates: true);
   }
 
   Future<void> stockIn({

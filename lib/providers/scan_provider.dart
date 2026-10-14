@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/product.dart';
 import 'household_provider.dart';
@@ -62,7 +61,7 @@ class Scan extends _$Scan {
     try {
       final feedback = await _process(barcode, state.mode, onUnknownProduct);
       if (feedback != null) _emit((s) => s.copyWith(feedback: feedback));
-    } catch (e, st) {
+    } catch (e) {
       //debugPrint('Scan fehlgeschlagen: $e\n$st');
       _emit(
         (s) => s.copyWith(
