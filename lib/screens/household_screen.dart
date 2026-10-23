@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fridge_master/widgets/custom_page.dart';
+import '../widgets/custom_page.dart';
 import '../providers/household_provider.dart';
 
 class HouseholdScreen extends ConsumerStatefulWidget {

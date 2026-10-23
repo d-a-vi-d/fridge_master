@@ -1,4 +1,4 @@
-import 'package:fridge_master/models/product.dart';
+import '../models/product.dart';
 
 class InventoryItem {
   final String id;

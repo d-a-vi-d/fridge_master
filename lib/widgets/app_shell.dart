@@ -1,69 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:app_links/app_links.dart';
+// import 'package:app_links/app_links.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fridge_master/providers/auth_provider.dart';
-import 'package:fridge_master/providers/household_provider.dart';
-import 'package:fridge_master/screens/home_screen.dart';
-import 'package:fridge_master/screens/household_screen.dart';
-import 'package:fridge_master/screens/sign_in_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:async';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import '../providers/auth_provider.dart';
+import '../providers/household_provider.dart';
+import '../screens/home_screen.dart';
+import '../screens/household_screen.dart';
+import '../screens/sign_in_screen.dart';
 
-import '../main.dart';
-
-class AppShell extends ConsumerStatefulWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({super.key});
-  @override
-  ConsumerState<AppShell> createState() => _AppShellState();
-}
+  // final _appLinks = AppLinks();
+  // StreamSubscription? _linkSub;
+  // Uri? _lastHandledUri;
 
-class _AppShellState extends ConsumerState<AppShell> {
-  final _appLinks = AppLinks();
-  StreamSubscription? _linkSub;
-  Uri? _lastHandledUri;
+  // Future<void> _handleInitialLink() async {
+  //   try {
+  //     final initialUri = await _appLinks.getInitialLink();
+  //     if (initialUri == null) return;
+  //     _lastHandledUri = initialUri;
+  //     await supabase.auth.getSessionFromUrl(initialUri);
+  //   } on AuthApiException catch (e) {
+  //     if (supabase.auth.currentSession != null) rethrow;
+  //   }
+  // }
 
-  Future<void> _handleInitialLink() async {
-    try {
-      final initialUri = await _appLinks.getInitialLink();
-      if (initialUri == null) return;
-      _lastHandledUri = initialUri;
-      await supabase.auth.getSessionFromUrl(initialUri);
-    } on AuthApiException catch (e) {
-      if (e.statusCode != '404') rethrow;
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (!kIsWeb) {
-      _handleInitialLink().then((_) {
-        if (!mounted) return;
-        _linkSub = _appLinks.uriLinkStream.listen((uri) async {
-          if (uri == _lastHandledUri) return;
-          _lastHandledUri = uri;
-          try {
-            await supabase.auth.getSessionFromUrl(uri);
-          } on AuthApiException catch (e) {
-            if (e.statusCode != '404') rethrow;
-          }
-        });
-      });
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (!kIsWeb) {
+  //     _handleInitialLink().then((_) {
+  //       //hat keine Fehlerbehandlung
+  //       if (!mounted) return;
+  //       _linkSub = _appLinks.uriLinkStream.listen((uri) async {
+  //         // Fehler werden geschluckt
+  //         if (uri == _lastHandledUri) return;
+  //         _lastHandledUri = uri;
+  //         try {
+  //           await supabase.auth.getSessionFromUrl(uri);
+  //         } on AuthApiException catch (e) {
+  //           if (e.statusCode != '404') rethrow;
+  //         }
+  //       });
+  //     });
+  //   }
+  // }
 
   static const _loading = Scaffold(body: Center(child: CircularProgressIndicator()));
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
     if (user == null) return const SignInScreen();
 
     final householdsAsync = ref.watch(householdsProvider);
 
     if (householdsAsync.hasError) {
-      return Scaffold(body: Center(child: Text('Fehler: ${householdsAsync.error}')));
+      return Scaffold(body: Center(child: Text('Fehler ${householdsAsync.error}')));
     }
     if (!householdsAsync.hasValue) {
       return _loading;
@@ -83,9 +75,9 @@ class _AppShellState extends ConsumerState<AppShell> {
     return const HomeScreen();
   }
 
-  @override
-  void dispose() {
-    _linkSub?.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //    _linkSub?.cancel();
+  //   super.dispose();
+  // }
 }

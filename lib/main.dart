@@ -26,14 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
-      title: 'FridgeMaster',
+      title: 'Fridge Master',
       theme: Themes.light,
       home: const AppShell(),
     );
   }
 }
-// Supabase-Client in Flutter verbinden, Auth (minimal, nur damit RLS greift)
-// Scan-Flow Einräumen: Kamera → Barcode → Open Food Facts lookup → in inventory_items speichern/erhöhen
-// Scan-Flow Verbrauchen: Kamera → Barcode → in inventory_items verringern/löschen
-// Produkt hinzufügen (unbekannter Code): manuelles Formular → landet in products
-// Übersicht: Liste aus inventory_items + Join auf products
