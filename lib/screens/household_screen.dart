@@ -51,6 +51,7 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
 
     return CustomPage(
       title: "Haushalt",
+      onRefresh: () => ref.refresh(householdsProvider.future),
       child: Column(
         children: [
           if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),

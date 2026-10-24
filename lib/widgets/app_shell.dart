@@ -9,41 +9,6 @@ import '../screens/sign_in_screen.dart';
 
 class AppShell extends ConsumerWidget {
   const AppShell({super.key});
-  // final _appLinks = AppLinks();
-  // StreamSubscription? _linkSub;
-  // Uri? _lastHandledUri;
-
-  // Future<void> _handleInitialLink() async {
-  //   try {
-  //     final initialUri = await _appLinks.getInitialLink();
-  //     if (initialUri == null) return;
-  //     _lastHandledUri = initialUri;
-  //     await supabase.auth.getSessionFromUrl(initialUri);
-  //   } on AuthApiException catch (e) {
-  //     if (supabase.auth.currentSession != null) rethrow;
-  //   }
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   if (!kIsWeb) {
-  //     _handleInitialLink().then((_) {
-  //       //hat keine Fehlerbehandlung
-  //       if (!mounted) return;
-  //       _linkSub = _appLinks.uriLinkStream.listen((uri) async {
-  //         // Fehler werden geschluckt
-  //         if (uri == _lastHandledUri) return;
-  //         _lastHandledUri = uri;
-  //         try {
-  //           await supabase.auth.getSessionFromUrl(uri);
-  //         } on AuthApiException catch (e) {
-  //           if (e.statusCode != '404') rethrow;
-  //         }
-  //       });
-  //     });
-  //   }
-  // }
 
   static const _loading = Scaffold(body: Center(child: CircularProgressIndicator()));
 
@@ -57,6 +22,7 @@ class AppShell extends ConsumerWidget {
     if (householdsAsync.hasError) {
       return Scaffold(body: Center(child: Text('Fehler ${householdsAsync.error}')));
     }
+    //TODO bis hierher gekommen
     if (!householdsAsync.hasValue) {
       return _loading;
     }
@@ -74,10 +40,4 @@ class AppShell extends ConsumerWidget {
 
     return const HomeScreen();
   }
-
-  // @override
-  // void dispose() {
-  //    _linkSub?.cancel();
-  //   super.dispose();
-  // }
 }
