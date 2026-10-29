@@ -1,3 +1,6 @@
+appshell weiter
+
+
 Householdscreen überarbeiten
 
 Seiteneffekt in build(). addPostFrameCallback mit select(...) ändert State mitten im Bauen. build() kann öfter laufen, als du denkst. Der Code prüft außerdem nur auf null. Ist selected gesetzt, aber der Haushalt nicht mehr in der Liste, zeigst du den HomeScreen mit leerem Inventar. Die saubere Richtung ist ein abgeleiteter Provider (“gewählter Haushalt, sonst der erste”), dann gibt es keinen null-Zustand. Das ist der beste Lernstoff hier, und wir machen ihn gemeinsam.

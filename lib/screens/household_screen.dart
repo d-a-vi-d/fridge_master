@@ -26,6 +26,9 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
       setState(() => _error = null);
       if (mounted) Navigator.pop(context);
     } catch (e) {
+      //TODO errorsnackbar nehmen
+      //context.showError(e)
+      //mounted prüfen
       setState(() => _error = e.toString());
     }
   }
@@ -41,6 +44,9 @@ class _HouseholdScreenState extends ConsumerState<HouseholdScreen> {
       setState(() => _error = null);
       if (mounted) Navigator.pop(context);
     } catch (e) {
+      //TODO error snackbar nehmen
+      //context.showError(e)
+      //mounted prüfen
       setState(() => _error = e.toString());
     }
   }

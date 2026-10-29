@@ -6,17 +6,11 @@ import '../utils/special_exception.dart';
 
 extension ErrorSnackbar on BuildContext {
   void showError(Object e) {
-    final msg = switch (e) {
-      SpecialException() => (e).errorMessage,
-      // AuthException() => _translateAuthError(e),
-      // PostgrestException() => _translatePostgrestError((e).code),
-      SocketException() || HttpException() => 'Netzwerkfehler. Prüfe deine Verbindung.',
-      _ => 'Ein unerwarteter Fehler ist aufgetreten.',
-    };
-    debugPrint("❗${e.toString()}");
+    final msg = getErrorMessage(e);
+
     ScaffoldMessenger.of(this).showSnackBar(SnackBar(content: Text(msg)));
   }
-
+  //TODO
   // String _translateAuthError(AuthException e) => switch (e.message) {
   //   String m
   //       when m.contains('already registered') ||
@@ -48,7 +42,7 @@ extension ErrorSnackbar on BuildContext {
   //     _ => 'Authentifizierungsfehler. Versuche es erneut.',
   //   },
   // };
-
+  //TODO
   // String _translatePostgrestError(String? code) => switch (code) {
   //   'P0001' => 'Aktion nicht erlaubt.',
   //   '23505' => 'Dieser Eintrag existiert bereits.',
@@ -56,4 +50,16 @@ extension ErrorSnackbar on BuildContext {
   //   '42501' => 'Keine Berechtigung für diese Aktion.',
   //   _ => 'Ein Datenbankfehler ist aufgetreten.',
   // };
+}
+
+String getErrorMessage(Object? e) {
+  debugPrint('❗ ${e.runtimeType}: $e');
+
+  return switch (e) {
+    SpecialException() => e.errorMessage,
+    // AuthException() => _translateAuthError(e),
+    // PostgrestException() => _translatePostgrestError((e).code),
+    SocketException() || HttpException() => 'Netzwerkfehler. Prüfe deine Verbindung.',
+    _ => 'Ein unerwarteter Fehler ist aufgetreten.',
+  };
 }
